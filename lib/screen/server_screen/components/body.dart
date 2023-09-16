@@ -1,18 +1,26 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'message_detail.dart';
-import 'message_list.dart';
+import '../../components/message_detail.dart';
+import '../../components/message_list.dart';
 
 class BodyServer extends StatefulWidget {
   final List<String> conversations;
 
-  BodyServer({required this.conversations});
+  const BodyServer({super.key, required this.conversations});
 
   @override
   _BodyServerState createState() => _BodyServerState();
 }
 
 class _BodyServerState extends State<BodyServer> {
-  String selectedConversation = '';
+  late String selectedConversation;
+
+  @override
+  void initState() {
+    selectedConversation = widget.conversations.first;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
