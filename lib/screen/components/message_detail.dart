@@ -110,6 +110,7 @@ class MessageDetail extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Phần tin nhắn
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -126,6 +127,7 @@ class MessageDetail extends StatelessWidget {
               ],
             ),
           ),
+          // Phần nhập tin nhắn
           Positioned(
             bottom: 0,
             left: 0,
