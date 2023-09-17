@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class MessageList extends StatefulWidget {
   final List<String> conversations;
   final Function(String) onSelectConversation;
