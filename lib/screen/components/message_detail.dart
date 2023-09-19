@@ -1,92 +1,110 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:chat/blocs/bloc_message/message_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MessageDetail extends StatelessWidget {
+class MessageDetail extends StatefulWidget {
   final String selectedConversation;
 
   const MessageDetail({super.key, required this.selectedConversation});
 
   @override
+  State<MessageDetail> createState() => _MessageDetailState();
+}
+
+class _MessageDetailState extends State<MessageDetail> {
+  late final TextEditingController _controller;
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  void sendMessage(BuildContext context) {
+    context.read<MessageBloc>().add(AddMessage(message: _controller.text));
+    _controller.text = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
-    final List<Message> messages = [
-      Message(
-        content: 'Tin nhắn 1 của Client',
-        time: '12:00 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 2 của Server',
-        time: '12:05 PM',
-        senderID: 'Server',
-      ),
-      Message(
-        content: 'Tin nhắn 3 của Client',
-        time: '12:10 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 1 của Client',
-        time: '12:00 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 2 của Server',
-        time: '12:05 PM',
-        senderID: 'Server',
-      ),
-      Message(
-        content: 'Tin nhắn 3 của Client',
-        time: '12:10 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 1 của Client',
-        time: '12:00 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 2 của Server',
-        time: '12:05 PM',
-        senderID: 'Server',
-      ),
-      Message(
-        content: 'Tin nhắn 3 của Client',
-        time: '12:10 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 1 của Client',
-        time: '12:00 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 2 của Server',
-        time: '12:05 PM',
-        senderID: 'Server',
-      ),
-      Message(
-        content: 'Tin nhắn 3 của Client',
-        time: '12:10 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 1 của Client',
-        time: '12:00 PM',
-        senderID: 'Client',
-      ),
-      Message(
-        content: 'Tin nhắn 2 của Server',
-        time: '12:05 PM',
-        senderID: 'Server',
-      ),
-      Message(
-        content: 'Tin nhắn 3 của Client',
-        time: '12:10 PM',
-        senderID: 'Client',
-      ),
-    ];
+    // final List<Message> messages = [
+    //   Message(
+    //     content: 'Tin nhắn 1 của Client',
+    //     time: '12:00 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 2 của Server',
+    //     time: '12:05 PM',
+    //     senderID: 'Server',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 3 của Client',
+    //     time: '12:10 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 1 của Client',
+    //     time: '12:00 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 2 của Server',
+    //     time: '12:05 PM',
+    //     senderID: 'Server',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 3 của Client',
+    //     time: '12:10 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 1 của Client',
+    //     time: '12:00 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 2 của Server',
+    //     time: '12:05 PM',
+    //     senderID: 'Server',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 3 của Client',
+    //     time: '12:10 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 1 của Client',
+    //     time: '12:00 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 2 của Server',
+    //     time: '12:05 PM',
+    //     senderID: 'Server',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 3 của Client',
+    //     time: '12:10 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 1 của Client',
+    //     time: '12:00 PM',
+    //     senderID: 'Client',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 2 của Server',
+    //     time: '12:05 PM',
+    //     senderID: 'Server',
+    //   ),
+    //   Message(
+    //     content: 'Tin nhắn 3 của Client',
+    //     time: '12:10 PM',
+    //     senderID: 'Client',
+    //   ),
+    // ];
 
     return Expanded(
       child: Stack(
@@ -103,7 +121,7 @@ class MessageDetail extends StatelessWidget {
                   color: Colors.grey.shade300,
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    'Đang trò chuyện với: $selectedConversation',
+                    'Đang trò chuyện với: ${widget.selectedConversation}',
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -112,14 +130,18 @@ class MessageDetail extends StatelessWidget {
                 ),
                 // Phần tin nhắn
                 Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final message = messages[index];
-                      return MessageBubble(
-                        content: message.content,
-                        senderID: message.senderID,
+                  child: BlocBuilder<MessageBloc, MessageState>(
+                    builder: (context, state) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = state.messages[index];
+                          return MessageBubble(
+                            content: message.message,
+                            senderID:message.senderInfo,
+                          );
+                        },
                       );
                     },
                   ),
@@ -149,7 +171,7 @@ class MessageDetail extends StatelessWidget {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.normal),
-                onSubmitted: (value) {},
+                onSubmitted: (value) => sendMessage(context),
                 decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     hintText: 'Nhập tin nhắn'),
@@ -162,7 +184,7 @@ class MessageDetail extends StatelessWidget {
               child: InkWell(
                 splashColor: Colors.grey.shade200,
                 hoverColor: Colors.grey.shade200,
-                onTap: () {},
+                onTap: () => sendMessage(context),
                 child: Container(
                   height: 50.0,
                   padding:

@@ -26,9 +26,6 @@ class ApiServiceAuthentication {
       if (responseData['status'] == true) {
         // Đăng ký thành công
         var user = UserResponse.fromJson(responseData);
-        print(user.data?.id);
-        print(user.data?.role);
-        print(user);
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('userID', user.data?.id as String? ?? '');
         prefs.setInt('userRole', user.data?.role as int? ?? 0);
@@ -59,9 +56,9 @@ class ApiServiceAuthentication {
       if (responseData['status'] == true) {
         // Đăng ký thành công
         var user = UserResponse.fromJson(responseData);
-        print(user.data?.id);
-        print(user.data?.role);
-        print(user);
+        // print(user.data?.id);
+        // print(user.data?.role);
+        // print(user);
         return user;
       } else {
         throw Exception(responseData['message']);
