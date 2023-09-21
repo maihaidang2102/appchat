@@ -3,9 +3,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/group_detail.dart';
+
 
 class ApiServiceAuthentication {
-  static const String baseUrl = 'http://13.214.193.32:3000/api/v1';
+  //static const String baseUrl = 'https://3496-115-74-189-104.ngrok-free.app/api/v1';
+  static const String baseUrl = 'http://13.214.193.32/api/v1';
 
   Future<UserResponse> registerUser(String userIP) async {
     final url = Uri.parse('$baseUrl/user/register');
@@ -65,6 +68,31 @@ class ApiServiceAuthentication {
       }
     } else {
       throw Exception('Đăng ký thất bại');
+    }
+  }
+  Future<GroupResponse> getUserDetail(String userId) async {
+    final url = Uri.parse('$baseUrl/group/detail/$userId');
+
+    final headers = {
+      'accept': 'application/json',
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+
+      if (responseData['status'] == true) {
+        // Xử lý dữ liệu khi thành công
+        var group = GroupResponse.fromJson(responseData);
+        print("3333333333333333");
+        print(group.data);
+        return group;
+      } else {
+        throw Exception(responseData['message']);
+      }
+    } else {
+      throw Exception('Gọi API thất bại');
     }
   }
 }

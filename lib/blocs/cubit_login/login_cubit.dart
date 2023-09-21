@@ -21,7 +21,7 @@ class LoginCubit extends Cubit<LoginState> {
         final userID = prefs.getString('userID');
 
         log("Received from WebSocket: $data");
-        if (data.toString().contains("Đăng ký thành công cho user: 6506781d602511b57ed65b43")) {
+        if (data.toString().contains("Đăng ký thành công cho user: ${userID!}")) {
           emit(LoginState(registeredSocket: true, loggedIn: true , role: state.role));
         }
       } catch (e) {
@@ -36,6 +36,7 @@ class LoginCubit extends Cubit<LoginState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userID');
     await prefs.remove('userRole');
+    await prefs.remove('groupID');
     final userID = prefs.getString('userID');
     final userRole = prefs.getInt('userRole')?.toInt();
 
@@ -44,19 +45,6 @@ class LoginCubit extends Cubit<LoginState> {
       _socketManager.register(userID);
       emit(
           LoginState(registeredSocket: false, loggedIn: true, role: userRole!));
-      // if (userRole == 0) {
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const ServerScreen()),
-      //   );
-      // } else if (userRole == 1) {
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const ClientScreen()),
-      //   );
-      // } else {
-      //   // Xử lý trường hợp khác tùy theo role
-      // }
     } else {
       // Nếu userID là null, tiến hành gửi API đăng nhập
       final apiService = ApiServiceAuthentication();
@@ -74,20 +62,6 @@ class LoginCubit extends Cubit<LoginState> {
           _socketManager.register(userResponse.data!.id!);
 
           emit(LoginState(registeredSocket: false, loggedIn: true, role: role));
-
-          // if (role == 0) {
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const ServerScreen()),
-          //   );
-          // } else if (role == 1) {
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const ClientScreen()),
-          //   );
-          // } else {
-          //   // Xử lý trường hợp khác tùy theo role
-          // }
         } else {
           // Xử lý trường hợp API trả về status là false (đăng ký thất bại)
           emit(const LoginState(
@@ -105,9 +79,12 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+
+
+
   void registerUser() async {
     final apiService = ApiServiceAuthentication();
-    const userIP = '1.2.3.9.2';
+    const userIP = '1.2.3.4.5';
     try {
       final prefs = await SharedPreferences.getInstance();
       final userResponse = await apiService.registerUser(userIP);
@@ -117,20 +94,6 @@ class LoginCubit extends Cubit<LoginState> {
 
       _socketManager.register(userResponse.data!.id!);
       emit(LoginState(registeredSocket: false, loggedIn: true, role: role));
-
-      // if (role == 0) {
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const ServerScreen()),
-      //   );
-      // } else if (role == 1) {
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => const ClientScreen()),
-      //   );
-      // } else {
-      //   // Xử lý trường hợp khác tùy theo role
-      // }
     } catch (e) {
       // Xử lý lỗi từ API
       emit(

@@ -1,5 +1,8 @@
 import 'package:chat/screen/components/message_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../blocs/cubit_messages/messages_cubit.dart';
 
 class ClientScreen extends StatelessWidget {
   const ClientScreen({super.key});
@@ -18,9 +21,12 @@ class ClientScreen extends StatelessWidget {
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
-      body: const Row(
+      body: Row(
         children: [
-          MessageDetail(selectedConversation: "Máy chủ"),
+          BlocProvider(
+            create: (context) => MessageCubit(), // Tạo một instance của MessageCubit
+            child: MessageDetail(selectedConversation: "Máy chủ"),
+          ),
         ],
       ),
     );
