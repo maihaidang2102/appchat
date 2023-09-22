@@ -25,7 +25,10 @@ class ResponseListMessage {
 
   String toJson() => json.encode(toMap());
 
-  factory ResponseListMessage.fromJson(String source) => ResponseListMessage.fromMap(json.decode(source));
+  factory ResponseListMessage.fromJson(String source) {
+    final Map<String, dynamic> map = json.decode(source);
+    return ResponseListMessage.fromMap(map);
+  }
 }
 
 class MessageItem {
@@ -82,6 +85,11 @@ class MessageItem {
       lastMessage: map['lastMessage'] ?? '',
     );
   }
+
+  factory MessageItem.fromJson(String source) {
+    final Map<String, dynamic> map = json.decode(source);
+    return MessageItem.fromMap(map);
+  }
 }
 
 class GroupId {
@@ -113,6 +121,11 @@ class GroupId {
       members: List<String>.from(map['members'] ?? []),
       ownerUin: map['ownerUin'] ?? '',
     );
+  }
+
+  factory GroupId.fromJson(String source) {
+    final Map<String, dynamic> map = json.decode(source);
+    return GroupId.fromMap(map);
   }
 }
 
@@ -153,5 +166,10 @@ class SenderInfo {
       createdAt: map['createdAt'] ?? '',
       updatedAt: map['updatedAt'] ?? '',
     );
+  }
+
+  factory SenderInfo.fromJson(String source) {
+    final Map<String, dynamic> map = json.decode(source);
+    return SenderInfo.fromMap(map);
   }
 }

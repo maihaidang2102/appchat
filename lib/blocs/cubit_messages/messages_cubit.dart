@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chat/blocs/cubit_messages/messages_state.dart';
+import 'package:chat/model/message_model.dart';
 import 'package:chat/model/response_message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,6 +23,28 @@ class MessageCubit extends Cubit<MessagesState> {
             ResponseListMessage responseListMessage = ResponseListMessage.fromJson(data);
             print(data.toString());
             updateMessages(responseListMessage.listMessage);
+        }
+        if (event == 'send_message') {
+          final messageData = jsonData['message'];
+          final responseMessage = MessageItem.fromMap(messageData);
+
+          print('Received message1: $messageData');
+          print('Received message2: $responseMessage');
+
+          // Lấy trạng thái hiện tại của MessagesState
+          final currentState = state;
+          print('RcurrentState: $currentState');
+
+          if (currentState is MessagesLoaded) {
+            // Nếu currentState là MessagesLoaded, hãy thêm `responseMessage` vào danh sách hiện có
+            final updatedMessages = [...currentState.messages, responseMessage];
+            print('Received message3: $updatedMessages');
+
+            // Cập nhật danh sách tin nhắn và emit trạng thái mới
+            emit(MessagesLoaded(updatedMessages));
+          } else {
+            // Nếu currentState không phải là MessagesLoaded, bạn có thể xử lý nó theo cách bạn muốn.
+          }
         }
       } catch (e) {
         print('Lỗi xử lý dữ liệu: $e');
@@ -93,7 +116,7 @@ class MessageCubit extends Cubit<MessagesState> {
       if (groupID != null && userID != null) {
         _socketManager.sendMessage(message);
 
-        emit(MessageSent()); // Emit một trạng thái để thông báo rằng tin nhắn đã được gửi.
+        //emit(MessageSent()); // Emit một trạng thái để thông báo rằng tin nhắn đã được gửi.
       } else {
         emit(MessageError("Group ID or User ID is missing."));
       }

@@ -8,8 +8,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SocketManager {
-  //static const String _socketUrl = "ws://3496-115-74-189-104.ngrok-free.app/vps-chat/ws";
-  static const String _socketUrl = "ws://13.214.193.32/vps-chat/ws";
+  static const String _socketUrl = "ws://b04d-115-74-189-104.ngrok-free.app/vps-chat/ws";
+  //static const String _socketUrl = "ws://13.214.193.32/vps-chat/ws";
 
   SocketManager._internal() {
     isConnected = true;

@@ -7,8 +7,8 @@ import '../model/group_detail.dart';
 
 
 class ApiServiceAuthentication {
-  //static const String baseUrl = 'https://3496-115-74-189-104.ngrok-free.app/api/v1';
-  static const String baseUrl = 'http://13.214.193.32/api/v1';
+  static const String baseUrl = 'https://b04d-115-74-189-104.ngrok-free.app/api/v1';
+  //static const String baseUrl = 'http://13.214.193.32/api/v1';
 
   Future<UserResponse> registerUser(String userIP) async {
     final url = Uri.parse('$baseUrl/user/register');

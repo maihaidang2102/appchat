@@ -44,10 +44,9 @@ class _MessageDetailState extends State<MessageDetail> {
 
   void _fetchAndPrintGroupID() async {
     final messageCubit = context.read<MessageCubit>();
-    //final messageCubitt = MessageCubit();
     final prefs = await SharedPreferences.getInstance();
     int? role = prefs.getInt('userRole');
-    if(role == 1){
+    if (role == 1) {
       final groupID = await messageCubit.checkGroupIDAndFetchUserDetail();
       if (groupID != '1') {
         print('Group ID: $groupID');
@@ -56,9 +55,13 @@ class _MessageDetailState extends State<MessageDetail> {
         print('Failed to fetch Group ID.');
         _createGroupSocket();
       }
+    } else if (role == 0) {
+      if(widget.selectedConversation != ''){
+        _getListMessageSocket(widget.selectedConversation);
+      }
     }
-
   }
+
   void _getListMessageSocket(String groupId) {
     final messageCubit = context.read<MessageCubit>();
     messageCubit.getListMessage(groupId);
