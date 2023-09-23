@@ -6,36 +6,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../components/message_detail.dart';
 import '../../components/message_list.dart';
 
-class BodyServer extends StatelessWidget {
-  final List<String> conversations;
+class BodyServer extends StatefulWidget {
+  const BodyServer({super.key});
 
-  const BodyServer({super.key, required this.conversations});
+  @override
+  State<BodyServer> createState() => _BodyServerState();
+}
+
+class _BodyServerState extends State<BodyServer> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ListGroupCubit(),
-      child: Builder(
-        builder: (context) {
-          context.read<ListGroupCubit>().getListGroup();
-          return Row(
-            children: [
-              // Phần bên trái - Danh sách người nhắn tin
-               MessageList(
-                //     onSelectConversation: (conversation) {
-                //       // Xử lý khi một người nhắn tin được chọn
-                //       setState(() {
-                //         selectedConversation = conversation;
-                //       });
-                   
-                // },
-              ),
-              // Phần bên phải - Tin nhắn chi tiết
-              MessageDetail(selectedConversation: ''),
-            ],
-          );
-        }
-      ),
+    context.read<ListGroupCubit>().getListGroup();
+
+    return const Row(
+      children: [
+        // Phần bên trái - Danh sách người nhắn tin
+        MessageList(),
+        // Phần bên phải - Tin nhắn chi tiết
+        MessageDetail(),
+      ],
     );
   }
 }

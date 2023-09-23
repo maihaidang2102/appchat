@@ -1,45 +1,43 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:chat/blocs/cubit_messages/messages_state.dart';
-import 'package:chat/model/message_model.dart';
-import 'package:chat/model/response_message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:chat/blocs/cubit_messages/messages_state.dart';
+import 'package:chat/model/response_message.dart';
 
 import '../../api_service/authentication.dart';
 import '../../api_service/socket_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageCubit extends Cubit<MessagesState> {
   MessageCubit() : super(MessageInitial()) {
-    final _socketManager = SocketManager.instance;
-
     _socketManager.addMessageListener((data) {
       try {
         final jsonData = jsonDecode(data);
         final event = jsonData['event'];
-
         if (event == 'list_message') {
-            ResponseListMessage responseListMessage = ResponseListMessage.fromJson(data);
-            print(data.toString());
-            updateMessages(responseListMessage.listMessage);
+          ResponseListMessage responseListMessage =
+              ResponseListMessage.fromJson(data);
+          updateMessages(responseListMessage.listMessage);
         }
         if (event == 'send_message') {
           final messageData = jsonData['message'];
           final responseMessage = MessageItem.fromMap(messageData);
 
-          print('Received message1: $messageData');
-          print('Received message2: $responseMessage');
+          // print('Received message1: $messageData');
+          // print('Received message2: $responseMessage');
 
           // Lấy trạng thái hiện tại của MessagesState
           final currentState = state;
-          print('RcurrentState: $currentState');
+          // print('RcurrentState: $currentState');
 
           if (currentState is MessagesLoaded) {
             // Nếu currentState là MessagesLoaded, hãy thêm `responseMessage` vào danh sách hiện có
             final updatedMessages = [...currentState.messages, responseMessage];
-            print('Received message3: $updatedMessages');
-
+            // print('Received message3: $updatedMessages');
             // Cập nhật danh sách tin nhắn và emit trạng thái mới
             emit(MessagesLoaded(updatedMessages));
           } else {
@@ -47,11 +45,11 @@ class MessageCubit extends Cubit<MessagesState> {
           }
         }
       } catch (e) {
-        print('Lỗi xử lý dữ liệu: $e');
+        log('Lỗi xử lý dữ liệu messsage cubit: $e');
       }
     });
-
   }
+  final _socketManager = SocketManager.instance;
 
   Future<String?> checkGroupIDAndFetchUserDetail() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,10 +65,10 @@ class MessageCubit extends Cubit<MessagesState> {
       final apiService = ApiServiceAuthentication();
       try {
         final userDetailResponse = await apiService.getUserDetail(userID!);
-        final newGroupID = userDetailResponse.data?.id ?? '';
+        final newGroupID = userDetailResponse.data!.id;
 
         // Kiểm tra nếu newGroupID không phải là null thì lưu và trả về nó.
-        if (newGroupID.isNotEmpty) {
+        if (newGroupID!.isNotEmpty) {
           // Lưu newGroupID vào SharedPreferences.
           prefs.setString('groupID', newGroupID);
 
@@ -80,12 +78,12 @@ class MessageCubit extends Cubit<MessagesState> {
           return newGroupID;
         } else {
           // Nếu newGroupID là rỗng, trả về null hoặc giá trị mặc định khác tùy theo yêu cầu.
-          return '1';
+          return null;
         }
       } catch (e) {
         log('Failed to fetch user detail: $e');
         // Trả về null trong trường hợp lỗi.
-        return '1';
+        return null;
       }
     }
   }
@@ -93,14 +91,14 @@ class MessageCubit extends Cubit<MessagesState> {
   void createGroup() async {
     try {
       // Gọi hàm createGroup từ SocketManager
-      final _socketManager = SocketManager.instance;
       final prefs = await SharedPreferences.getInstance();
       final userID = prefs.getString('userID');
       final List<String> members = [userID ?? ''];
 
       _socketManager.createGroup(userID!, members);
 
-      emit(GroupCreating()); // Emit một trạng thái để thông báo rằng đang tạo nhóm.
+      emit(
+          GroupCreating()); // Emit một trạng thái để thông báo rằng đang tạo nhóm.
     } catch (e) {
       emit(MessageError("Failed to create group: $e"));
     }
@@ -108,7 +106,6 @@ class MessageCubit extends Cubit<MessagesState> {
 
   void sendMessage(String message) async {
     try {
-      final _socketManager = SocketManager.instance;
       final prefs = await SharedPreferences.getInstance();
       final groupID = prefs.getString('groupID');
       final userID = prefs.getString('userID');
@@ -127,7 +124,9 @@ class MessageCubit extends Cubit<MessagesState> {
 
   void getListMessage(String groupId) async {
     try {
-      final _socketManager = SocketManager.instance;
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('groupID', groupId);
+
       _socketManager.getListMessage(groupId);
     } catch (e) {
       emit(MessageError("Failed to get list of messages: $e"));
@@ -135,9 +134,6 @@ class MessageCubit extends Cubit<MessagesState> {
   }
 
   void updateMessages(List<MessageItem> messages) {
-    print("111111111111111111111");
-    print(messages);
-    print("111111111111111111111");
     emit(MessagesLoaded(messages));
   }
 }

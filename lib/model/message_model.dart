@@ -7,45 +7,68 @@ import 'package:flutter/material.dart';
 
 @immutable
 class MessageModel extends Equatable {
-  num type;
-  bool status;
-  String groupId;
-  String message;
-  String senderInfo;
+  String? id;
+  num? type;
+  bool? status;
+  String? groupId;
+  String? message;
+  String? senderInfo;
+  List<String>? seenUin;
   MessageModel({
-    required this.type,
-    required this.status,
-    required this.groupId,
-    required this.message,
-    required this.senderInfo,
+    this.id,
+    this.type,
+    this.status,
+    this.groupId,
+    this.message,
+    this.senderInfo,
+    this.seenUin,
   });
-  
+
   @override
-  List<Object?> get props =>[type, status, groupId, message, senderInfo];
+  List<Object?> get props => [type, status, groupId, message, senderInfo];
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    result.addAll({'type': type});
-    result.addAll({'status': status});
-    result.addAll({'groupId': groupId});
-    result.addAll({'message': message});
-    result.addAll({'senderInfo': senderInfo});
-  
+
+    if (id != null) {
+      result.addAll({'id': id});
+    }
+    if (type != null) {
+      result.addAll({'type': type});
+    }
+    if (status != null) {
+      result.addAll({'status': status});
+    }
+    if (groupId != null) {
+      result.addAll({'groupId': groupId});
+    }
+    if (message != null) {
+      result.addAll({'message': message});
+    }
+    if (senderInfo != null) {
+      result.addAll({'senderInfo': senderInfo});
+    }
+    if (seenUin != null) {
+      result.addAll({'seenUin': seenUin});
+    }
+
     return result;
   }
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
-      type: map['type'] ?? 0,
-      status: map['status'] ?? false,
-      groupId: map['groupId'] ?? '',
-      message: map['message'] ?? '',
-      senderInfo: map['senderInfo'] ?? '',
+      id: map['id'],
+      type: map['type'],
+      status: map['status'],
+      groupId: map['groupId'],
+      message: map['message'],
+      senderInfo: map['senderInfo'],
+      seenUin: List<String>.from(map['seenUin']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory MessageModel.fromJson(String source) => MessageModel.fromMap(json.decode(source));
+  factory MessageModel.fromJson(String source) =>
+      MessageModel.fromMap(json.decode(source));
 }

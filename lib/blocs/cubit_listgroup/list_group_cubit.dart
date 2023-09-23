@@ -17,21 +17,25 @@ class ListGroupCubit extends HydratedCubit<ListGroupState> {
   ListGroupCubit() : super(const ListGroupState(listGroup: [])) {
     _socketManager.addMessageListener((data) {
       try {
+        print(data);
         if (data.toString().contains('list_group')) {
           ResponseGroups responseGroups = ResponseGroups.fromJson(data);
           log("=================================GET LIST GROUP ==================================");
-          print(data.toString());
-          updateGroups(responseGroups.listGroup);
+          updateGroups(responseGroups.listGroup!);
         }
       } catch (e) {
         log("=================================Error GET LIST GROUP ==================================");
         updateGroups([]);
-        print(e.toString());
+        log(e.toString());
       }
     });
   }
   final _socketManager = SocketManager.instance;
-  void updateGroups(List<GroupModel> groups) {
+  Future<void> updateGroups(List<GroupModel> groups) async {
+    if (groups.isNotEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('groupId', groups.first.id!);
+    }
     emit(ListGroupState(listGroup: groups));
   }
 

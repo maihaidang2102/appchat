@@ -25,7 +25,7 @@ class ClientScreen extends StatelessWidget {
         children: [
           BlocProvider(
             create: (context) => MessageCubit(), // Tạo một instance của MessageCubit
-            child: MessageDetail(selectedConversation: "Máy chủ"),
+            child: const MessageDetail(),
           ),
         ],
       ),

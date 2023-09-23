@@ -1,9 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
-import 'package:equatable/equatable.dart';
 import 'package:chat/model/message_model.dart';
 import 'package:chat/model/user_model.dart';
 
-class GroupModel extends Equatable {
+class GroupModel {
   String? id;
   num groupType;
   List<UserModel> members;
@@ -22,28 +23,29 @@ class GroupModel extends Equatable {
     this.lastMessage,
   });
 
-  @override
-  List<Object?> get props => [id, groupType, members, ownerUin, createdAt, updatedAt, lastMessage];
+  
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-    if (id != null) {
+  
+    if(id != null){
       result.addAll({'_id': id});
     }
     result.addAll({'groupType': groupType});
     result.addAll({'members': members.map((x) => x.toMap()).toList()});
-    if (ownerUin != null) {
+    if(ownerUin != null){
       result.addAll({'ownerUin': ownerUin!.toMap()});
     }
-    if (createdAt != null) {
+    if(createdAt != null){
       result.addAll({'createdAt': createdAt});
     }
-    if (updatedAt != null) {
+    if(updatedAt != null){
       result.addAll({'updatedAt': updatedAt});
     }
-    if (lastMessage != null) {
+    if(lastMessage != null){
       result.addAll({'lastMessage': lastMessage!.toMap()});
     }
+  
     return result;
   }
 

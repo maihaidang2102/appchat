@@ -1,10 +1,13 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:chat/api_service/authentication.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:chat/api_service/socket_manager.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:chat/api_service/authentication.dart';
+import 'package:chat/api_service/socket_manager.dart';
 
 part 'login_state.dart';
 
@@ -20,12 +23,18 @@ class LoginCubit extends Cubit<LoginState> {
         final prefs = await SharedPreferences.getInstance();
         final userID = prefs.getString('userID');
 
-        log("Received from WebSocket: $data");
-        if (data.toString().contains("Đăng ký thành công cho user: ${userID!}")) {
-          emit(LoginState(registeredSocket: true, loggedIn: true , role: state.role));
+        if (userID != null &&
+            data
+                .toString()
+                .contains("Đăng ký thành công cho user: $userID")) {
+          log("Received from WebSocket: $data");
+
+          emit(LoginState(
+              registeredSocket: true, loggedIn: true, role: state.role));
         }
       } catch (e) {
         log("======================= Error LOGIN ===================");
+
         log(e.toString());
       }
     });
@@ -73,18 +82,14 @@ class LoginCubit extends Cubit<LoginState> {
         // Xử lý lỗi từ API
         emit(const LoginState(
             registeredSocket: false, loggedIn: false, role: -1));
-
         log('Đăng nhập thất bại: $e');
       }
     }
   }
 
-
-
-
   void registerUser() async {
     final apiService = ApiServiceAuthentication();
-    const userIP = '1.2.3.4.5';
+    const userIP = '1.2.3.4.1';
     try {
       final prefs = await SharedPreferences.getInstance();
       final userResponse = await apiService.registerUser(userIP);
@@ -99,7 +104,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(
           const LoginState(registeredSocket: false, loggedIn: false, role: -1));
 
-      print('Đăng ký thất bại: $e');
+      log('Đăng ký thất bại: $e');
     }
   }
 }

@@ -11,32 +11,7 @@ class ServerScreen extends StatefulWidget {
 }
 
 class _ServerScreenState extends State<ServerScreen> {
-  // Danh sách các người nhắn tin
-  List<String> conversations = [
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    'Người nhắn tin 1',
-    'Người nhắn tin 2',
-    'Người nhắn tin 3',
-    // Thêm các người nhắn tin khác ở đây
-  ];
-
+ 
   String selectedConversation = '';
 
   @override
@@ -53,7 +28,7 @@ class _ServerScreenState extends State<ServerScreen> {
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
-      body: BodyServer(conversations: conversations),
+      body: const BodyServer(),
     );
   }
 }

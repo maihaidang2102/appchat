@@ -1,6 +1,5 @@
 import 'package:chat/model/response_message.dart';
 
-import '../../screen/components/message_detail.dart';
 
 abstract class MessagesState {}
 
@@ -10,8 +9,6 @@ class MessagesLoaded extends MessagesState {
   final List<MessageItem> messages;
   MessagesLoaded(this.messages);
 
-  @override
-  List<Object?> get props => [messages];
 }
 
 class GroupCreating extends MessagesState {}
