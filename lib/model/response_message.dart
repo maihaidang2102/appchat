@@ -19,7 +19,8 @@ class ResponseListMessage {
   factory ResponseListMessage.fromMap(Map<String, dynamic> map) {
     return ResponseListMessage(
       event: map['event'] ?? '',
-      listMessage: List<MessageItem>.from(map['listMessage']?.map((x) => MessageItem.fromMap(x))),
+      listMessage: List<MessageItem>.from(
+          map['listMessage']?.map((x) => MessageItem.fromMap(x))),
     );
   }
 
@@ -56,12 +57,10 @@ class MessageItem {
     required this.lastMessage,
   });
 
-  
-
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
-    result.addAll({'id': id});
+
+    result.addAll({'_id': id});
     result.addAll({'type': type});
     result.addAll({'status': status});
     result.addAll({'groupId': groupId.toMap()});
@@ -71,13 +70,13 @@ class MessageItem {
     result.addAll({'createdAt': createdAt});
     result.addAll({'updatedAt': updatedAt});
     result.addAll({'lastMessage': lastMessage});
-  
+
     return result;
   }
 
   factory MessageItem.fromMap(Map<String, dynamic> map) {
     return MessageItem(
-      id: map['id'] ?? '',
+      id: map['_id'] ?? '',
       type: map['type']?.toInt() ?? 0,
       status: map['status'] ?? false,
       groupId: GroupId.fromMap(map['groupId']),
@@ -92,7 +91,8 @@ class MessageItem {
 
   String toJson() => json.encode(toMap());
 
-  factory MessageItem.fromJson(String source) => MessageItem.fromMap(json.decode(source));
+  factory MessageItem.fromJson(String source) =>
+      MessageItem.fromMap(json.decode(source));
 }
 
 class GroupId {
@@ -110,7 +110,7 @@ class GroupId {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      '_id': id,
       'groupType': groupType,
       'members': members,
       'ownerUin': ownerUin,
@@ -119,7 +119,7 @@ class GroupId {
 
   factory GroupId.fromMap(Map<String, dynamic> map) {
     return GroupId(
-      id: map['id'] ?? '',
+      id: map['_id'] ?? '',
       groupType: map['groupType'] ?? 0,
       members: List<String>.from(map['members'] ?? []),
       ownerUin: map['ownerUin'] ?? '',
@@ -151,7 +151,7 @@ class SenderInfo {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      '_id': id,
       'userName': userName,
       'userIP': userIP,
       'role': role,
@@ -162,7 +162,7 @@ class SenderInfo {
 
   factory SenderInfo.fromMap(Map<String, dynamic> map) {
     return SenderInfo(
-      id: map['id'] ?? '',
+      id: map['_id'] ?? '',
       userName: map['userName'] ?? '',
       userIP: map['userIP'] ?? '',
       role: map['role'] ?? 0,

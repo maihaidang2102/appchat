@@ -51,11 +51,6 @@ class _MessageDetailState extends State<MessageDetail> {
         _getListMessageSocket(groupId);
       }
     }
-    // else if (role == 0) {
-    //   if (widget.selectedConversation != null) {
-    //     _getListMessageSocket(widget.selectedConversation!);
-    //   }
-    // }
   }
 
   void _getListMessageSocket(String groupId) {
@@ -120,6 +115,7 @@ class _MessageDetailState extends State<MessageDetail> {
                           return MessageBubble(
                             content: message.message,
                             senderID: message.senderInfo.role,
+                            role: state.role,
                           );
                         },
                       ),
@@ -182,8 +178,74 @@ class _MessageDetailState extends State<MessageDetail> {
           );
         } else {
           // Hiển thị một tiêu đề hoặc thông báo tùy ý khi không có tin nhắn hoặc lỗi.
-          return const Center(
-            child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
+          return BlocBuilder<LoginCubit, LoginState>(
+            builder: (context, state) {
+              return SizedBox(
+                width: state.role == 0 ? width - 200 : width,
+                child: Column(
+                  // shrinkWrap: true,
+                  // scrollDirection: Axis.vertical,
+                  // padding: EdgeInsets.only(bottom: 200),
+                  children: [
+                    const Center(
+                      child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
+                    ),
+                    Spacer(),
+                    RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: (event) {
+                        if (event is RawKeyDownEvent &&
+                            event.logicalKey == LogicalKeyboardKey.enter) {
+                          _sendMessage();
+                        }
+                      },
+                      child: Container(
+                        height: 50.0,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            top: BorderSide(width: 1, color: Colors.black12),
+                            right: BorderSide(width: 1, color: Colors.black12),
+                            left: BorderSide(width: 1, color: Colors.black12),
+                          ),
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          keyboardType: TextInputType.text,
+                          controller: _controller,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal),
+                          onSubmitted: (value) => _sendMessage(),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Nhập tin nhắn',
+                            suffix: InkWell(
+                              splashColor: Colors.grey.shade200,
+                              hoverColor: Colors.grey.shade200,
+                              onTap: () => _sendMessage(),
+                              child: Container(
+                                height: 50.0,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 20),
+                                child: const Text(
+                                  "Gửi",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         }
       },
@@ -206,17 +268,18 @@ class Message {
 class MessageBubble extends StatelessWidget {
   final String content;
   final int senderID;
+  final int role;
 
   const MessageBubble(
-      {super.key, required this.content, required this.senderID});
+      {super.key, required this.content, required this.senderID, required this.role});
 
   @override
   Widget build(BuildContext context) {
     final Color? bubbleColor =
-        senderID == 1 ? Colors.grey.shade400 : Colors.grey[200];
+        senderID != role ? Colors.grey.shade400 : Colors.grey[200];
 
     final CrossAxisAlignment alignment =
-        senderID == 1 ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+        senderID != role ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),

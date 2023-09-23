@@ -32,18 +32,20 @@ class MessageCubit extends Cubit<MessagesState> {
 
           // Lấy trạng thái hiện tại của MessagesState
           final currentState = state;
-          // print('RcurrentState: $currentState');
 
           final prefs = await SharedPreferences.getInstance();
           final String? groupId = prefs.getString('groupId');
+
           if (currentState is MessagesLoaded &&
               responseMessage.groupId.id == groupId!) {
-            // Nếu currentState là MessagesLoaded, hãy thêm `responseMessage` vào danh sách hiện có
+            log(responseMessage.toJson());
+
             final updatedMessages = [...currentState.messages, responseMessage];
             // print('Received message3: $updatedMessages');
             // Cập nhật danh sách tin nhắn và emit trạng thái mới
             emit(MessagesLoaded(updatedMessages));
           } else {
+            print("");
             // Nếu currentState không phải là MessagesLoaded, bạn có thể xử lý nó theo cách bạn muốn.
           }
         }
@@ -73,7 +75,7 @@ class MessageCubit extends Cubit<MessagesState> {
       // Kiểm tra nếu newGroupID không phải là null thì lưu và trả về nó.
       if (newGroupID!.isNotEmpty) {
         // Lưu newGroupID vào SharedPreferences.
-        prefs.setString('groupID', newGroupID);
+        prefs.setString('groupId', newGroupID);
 
         log('Fetched and stored groupID: $newGroupID');
 
@@ -102,6 +104,7 @@ class MessageCubit extends Cubit<MessagesState> {
 
       emit(
           GroupCreating()); // Emit một trạng thái để thông báo rằng đang tạo nhóm.
+      emit(MessagesLoaded([]));
     } catch (e) {
       emit(MessageError("Failed to create group: $e"));
     }
@@ -110,7 +113,7 @@ class MessageCubit extends Cubit<MessagesState> {
   void sendMessage(String message) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final groupID = prefs.getString('groupID');
+      final groupID = prefs.getString('groupId');
       final userID = prefs.getString('userID');
 
       if (groupID != null && userID != null) {
@@ -128,7 +131,7 @@ class MessageCubit extends Cubit<MessagesState> {
   void getListMessage(String groupId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      prefs.setString('groupID', groupId);
+      prefs.setString('groupId', groupId);
 
       _socketManager.getListMessage(groupId);
     } catch (e) {

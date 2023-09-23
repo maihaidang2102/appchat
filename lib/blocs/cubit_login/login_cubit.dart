@@ -45,7 +45,7 @@ class LoginCubit extends Cubit<LoginState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userID');
     await prefs.remove('userRole');
-    await prefs.remove('groupID');
+    await prefs.remove('groupId');
     final userID = prefs.getString('userID');
     final userRole = prefs.getInt('userRole')?.toInt();
 
@@ -89,7 +89,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   void registerUser() async {
     final apiService = ApiServiceAuthentication();
-    const userIP = '1.2.3.4.1';
+    const userIP = '1.2.3.4.132';
     try {
       final prefs = await SharedPreferences.getInstance();
       final userResponse = await apiService.registerUser(userIP);

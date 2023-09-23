@@ -66,7 +66,7 @@ class SocketManager {
           final groupId = newGroup['_id'];
           final response = jsonData['newGroup'];
           final prefs = await SharedPreferences.getInstance();
-          prefs.setString('groupID', groupId);
+          prefs.setString('groupId', groupId);
 
           // Xử lý dữ liệu trả về từ sự kiện create_group ở đây
           // Ví dụ: In ra thông báo
@@ -102,7 +102,7 @@ class SocketManager {
     const messageType = 1;
     const status = 0;
     final prefs = await SharedPreferences.getInstance();
-    final groupID = prefs.getString('groupID');
+    final groupID = prefs.getString('groupId');
     final userID = prefs.getString('userID');
 
     final messageData = {
