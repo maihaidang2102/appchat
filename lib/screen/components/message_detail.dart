@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:chat/blocs/cubit_login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,225 +83,110 @@ class _MessageDetailState extends State<MessageDetail> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    return BlocProvider(
-      create: (context) => MessageCubit(),
-      child: BlocBuilder<MessageCubit, MessagesState>(
-        builder: (context, state) {
-          if (state is MessagesLoaded) {
-            final messages = state.messages.reversed.toList();
-            return SizedBox(
-              width: width - 200,
-              child: Column(
-                // shrinkWrap: true,
-                // scrollDirection: Axis.vertical,
-                // padding: EdgeInsets.only(bottom: 200),
-                children: [
-                  Container(
-                    color: Colors.grey.shade300,
-                    padding: const EdgeInsets.all(10.0),
-                    width: width - 200,
-                    child: Text(
-                      'Đang trò chuyện với: ${messages.isEmpty ? "" : messages.first.seenUin.isNotEmpty ? messages.first.seenUin.first : ""}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height - 150,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      reverse: true,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        return MessageBubble(
-                          content: message.message,
-                          senderID: message.id,
-                        );
-                      },
-                    ),
-                  ),
-                  RawKeyboardListener(
-                    focusNode: FocusNode(),
-                    onKey: (event) {
-                      if (event is RawKeyDownEvent &&
-                          event.logicalKey == LogicalKeyboardKey.enter) {
-                        _sendMessage();
-                      }
-                    },
-                    child: Container(
-                      height: 50.0,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          top: BorderSide(width: 1, color: Colors.black12),
-                          right: BorderSide(width: 1, color: Colors.black12),
-                          left: BorderSide(width: 1, color: Colors.black12),
+    return BlocBuilder<MessageCubit, MessagesState>(
+      builder: (context, state) {
+        if (state is MessagesLoaded) {
+          final messages = state.messages.reversed.toList();
+          return BlocBuilder<LoginCubit, LoginState>(
+            builder: (context, state) {
+              return SizedBox(
+                width: state.role == 0 ? width - 200 : width,
+                child: Column(
+                  // shrinkWrap: true,
+                  // scrollDirection: Axis.vertical,
+                  // padding: EdgeInsets.only(bottom: 200),
+                  children: [
+                    Container(
+                      color: Colors.grey.shade300,
+                      padding: const EdgeInsets.all(10.0),
+                      width: state.role == 0 ? width - 200 : width,
+                      child: Text(
+                        'Đang trò chuyện với: ${messages.isEmpty ? "" : messages.first.seenUin.isNotEmpty ? messages.first.seenUin.first : ""}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: TextField(
-                        autofocus: true,
-                        keyboardType: TextInputType.text,
-                        controller: _controller,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
-                        onSubmitted: (value) => _sendMessage(),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Nhập tin nhắn',
-                          suffix: InkWell(
-                            splashColor: Colors.grey.shade200,
-                            hoverColor: Colors.grey.shade200,
-                            onTap: () => _sendMessage(),
-                            child: Container(
-                              height: 50.0,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 20),
-                              child: const Text(
-                                "Gửi",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: height - 150,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          return MessageBubble(
+                            content: message.message,
+                            senderID: message.senderInfo.role,
+                          );
+                        },
+                      ),
+                    ),
+                    RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: (event) {
+                        if (event is RawKeyDownEvent &&
+                            event.logicalKey == LogicalKeyboardKey.enter) {
+                          _sendMessage();
+                        }
+                      },
+                      child: Container(
+                        height: 50.0,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            top: BorderSide(width: 1, color: Colors.black12),
+                            right: BorderSide(width: 1, color: Colors.black12),
+                            left: BorderSide(width: 1, color: Colors.black12),
+                          ),
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          keyboardType: TextInputType.text,
+                          controller: _controller,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal),
+                          onSubmitted: (value) => _sendMessage(),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Nhập tin nhắn',
+                            suffix: InkWell(
+                              splashColor: Colors.grey.shade200,
+                              hoverColor: Colors.grey.shade200,
+                              onTap: () => _sendMessage(),
+                              child: Container(
+                                height: 50.0,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 20),
+                                child: const Text(
+                                  "Gửi",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            // Hiển thị một tiêu đề hoặc thông báo tùy ý khi không có tin nhắn hoặc lỗi.
-            return const Center(
-              child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
-            );
-          }
-        },
-      ),
-
-      // Expanded(
-      //   child: Stack(
-      //     children: [
-      //       Container(
-      //         height: height,
-      //         margin: const EdgeInsets.only(bottom: 50),
-      //         decoration: BoxDecoration(
-      //             color: Colors.grey.shade200,
-      //             border: Border.all(width: 1, color: Colors.black12)),
-      //         child: BlocBuilder<MessageCubit, MessagesState>(
-      //           builder: (context, state) {
-      //             if (state is MessagesLoaded) {
-      //               final messages = state.messages;
-      //               return ListView(
-      //                 shrinkWrap: true,
-      //                 padding: EdgeInsets.only(bottom: 200),
-      //                 children: [
-      //                   Container(
-      //                     width: double.infinity,
-      //                     color: Colors.grey.shade300,
-      //                     padding: const EdgeInsets.all(10.0),
-      //                     child: Text(
-      //                       'Đang trò chuyện với: ${messages.isEmpty ? "" : messages.first.seenUin.isNotEmpty ? messages.first.seenUin.first : ""}',
-      //                       style: const TextStyle(
-      //                         color: Colors.black,
-      //                         fontWeight: FontWeight.bold,
-      //                       ),
-      //                     ),
-      //                   ),
-      //                   ListView.builder(
-      //                     shrinkWrap: true,
-      //                     physics: const AlwaysScrollableScrollPhysics(),
-      //                     itemCount: messages.length,
-      //                     itemBuilder: (context, index) {
-      //                       final message = messages[index];
-      //                       return MessageBubble(
-      //                         content: message.message,
-      //                         senderID: message.id,
-      //                       );
-      //                     },
-      //                   ),
-      //                 ],
-      //               );
-      //             } else {
-      //               // Hiển thị một tiêu đề hoặc thông báo tùy ý khi không có tin nhắn hoặc lỗi.
-      //               return const Center(
-      //                 child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
-      //               );
-      //             }
-      //           },
-      //         ),
-      //       ),
-      //       Positioned(
-      //         bottom: 0,
-      //         left: 0,
-      //         right: 0,
-      //         child:
-      // RawKeyboardListener(
-      //           focusNode: FocusNode(),
-      //           onKey: (event) {
-      //             if (event is RawKeyDownEvent &&
-      //                 event.logicalKey == LogicalKeyboardKey.enter) {
-      //               _sendMessage();
-      //             }
-      //           },
-      //           child: Container(
-      //             height: 50.0,
-      //             decoration: const BoxDecoration(
-      //               color: Colors.white,
-      //               border: Border(
-      //                 top: BorderSide(width: 1, color: Colors.black12),
-      //                 right: BorderSide(width: 1, color: Colors.black12),
-      //                 left: BorderSide(width: 1, color: Colors.black12),
-      //               ),
-      //             ),
-      //             child: TextField(
-      //               keyboardType: TextInputType.text,
-      //               controller: _controller,
-      //               style: const TextStyle(
-      //                   color: Colors.black,
-      //                   fontSize: 14,
-      //                   fontWeight: FontWeight.normal),
-      //               onSubmitted: (value) => _sendMessage(),
-      //               decoration: const InputDecoration(
-      //                   contentPadding: EdgeInsets.all(10),
-      //                   hintText: 'Nhập tin nhắn'),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       Positioned(
-      //         bottom: 0,
-      //         right: 0,
-      //         child:
-      // InkWell(
-      //           splashColor: Colors.grey.shade200,
-      //           hoverColor: Colors.grey.shade200,
-      //           onTap: () => _sendMessage(),
-      //           child: Container(
-      //             height: 50.0,
-      //             padding:
-      //                 const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-      //             child: const Text(
-      //               "Gửi",
-      //               style: TextStyle(
-      //                   color: Colors.black,
-      //                   fontSize: 16,
-      //                   fontWeight: FontWeight.bold),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+                  ],
+                ),
+              );
+            },
+          );
+        } else {
+          // Hiển thị một tiêu đề hoặc thông báo tùy ý khi không có tin nhắn hoặc lỗi.
+          return const Center(
+            child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
+          );
+        }
+      },
     );
   }
 }
@@ -319,7 +205,7 @@ class Message {
 
 class MessageBubble extends StatelessWidget {
   final String content;
-  final String senderID;
+  final int senderID;
 
   const MessageBubble(
       {super.key, required this.content, required this.senderID});
@@ -327,11 +213,10 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color? bubbleColor =
-        senderID == 'Client' ? Colors.grey.shade400 : Colors.grey[200];
+        senderID == 1 ? Colors.grey.shade400 : Colors.grey[200];
 
-    final CrossAxisAlignment alignment = senderID == 'Client'
-        ? CrossAxisAlignment.start
-        : CrossAxisAlignment.end;
+    final CrossAxisAlignment alignment =
+        senderID == 1 ? CrossAxisAlignment.start : CrossAxisAlignment.end;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),

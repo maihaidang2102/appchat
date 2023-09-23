@@ -17,7 +17,6 @@ class ListGroupCubit extends HydratedCubit<ListGroupState> {
   ListGroupCubit() : super(const ListGroupState(listGroup: [])) {
     _socketManager.addMessageListener((data) {
       try {
-        print(data);
         if (data.toString().contains('list_group')) {
           ResponseGroups responseGroups = ResponseGroups.fromJson(data);
           log("=================================GET LIST GROUP ==================================");

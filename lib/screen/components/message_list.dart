@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,7 +6,6 @@ import 'package:chat/blocs/cubit_messages/messages_cubit.dart';
 import 'package:chat/model/group_model.dart';
 
 class MessageList extends StatefulWidget {
-
   const MessageList({
     super.key,
   });
@@ -48,7 +46,7 @@ class _MessageListState extends State<MessageList> {
                           ),
                         ),
                         Text(
-                          model.lastMessage!.message.toString(),
+                          model.lastMessage!.message ?? '',
                           style: const TextStyle(
                             fontSize: 13,
                             color: Colors.redAccent,

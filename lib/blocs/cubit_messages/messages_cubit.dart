@@ -14,7 +14,7 @@ import '../../api_service/socket_manager.dart';
 
 class MessageCubit extends Cubit<MessagesState> {
   MessageCubit() : super(MessageInitial()) {
-    _socketManager.addMessageListener((data) {
+    _socketManager.addMessageListener((data) async {
       try {
         final jsonData = jsonDecode(data);
         final event = jsonData['event'];
@@ -34,7 +34,10 @@ class MessageCubit extends Cubit<MessagesState> {
           final currentState = state;
           // print('RcurrentState: $currentState');
 
-          if (currentState is MessagesLoaded) {
+          final prefs = await SharedPreferences.getInstance();
+          final String? groupId = prefs.getString('groupId');
+          if (currentState is MessagesLoaded &&
+              responseMessage.groupId.id == groupId!) {
             // Nếu currentState là MessagesLoaded, hãy thêm `responseMessage` vào danh sách hiện có
             final updatedMessages = [...currentState.messages, responseMessage];
             // print('Received message3: $updatedMessages');
@@ -53,39 +56,39 @@ class MessageCubit extends Cubit<MessagesState> {
 
   Future<String?> checkGroupIDAndFetchUserDetail() async {
     final prefs = await SharedPreferences.getInstance();
-    final groupID = prefs.getString('groupID');
     final userID = prefs.getString('userID');
 
-    if (groupID != null) {
-      // Đã có groupID trong storage, trả về nó.
-      log('groupID found in storage: $groupID');
-      return groupID;
-    } else {
-      // Không có groupID trong storage, gọi API để lấy chi tiết người dùng.
-      final apiService = ApiServiceAuthentication();
-      try {
-        final userDetailResponse = await apiService.getUserDetail(userID!);
-        final newGroupID = userDetailResponse.data!.id;
+    // if (groupID != null) {
+    //   // Đã có groupID trong storage, trả về nó.
+    //   log('groupID found in storage: $groupID');
 
-        // Kiểm tra nếu newGroupID không phải là null thì lưu và trả về nó.
-        if (newGroupID!.isNotEmpty) {
-          // Lưu newGroupID vào SharedPreferences.
-          prefs.setString('groupID', newGroupID);
+    //   return groupID;
+    // } else {
+    // Không có groupID trong storage, gọi API để lấy chi tiết người dùng.
+    final apiService = ApiServiceAuthentication();
+    try {
+      final userDetailResponse = await apiService.getUserDetail(userID!);
+      final newGroupID = userDetailResponse.data!.id;
 
-          log('Fetched and stored groupID: $newGroupID');
+      // Kiểm tra nếu newGroupID không phải là null thì lưu và trả về nó.
+      if (newGroupID!.isNotEmpty) {
+        // Lưu newGroupID vào SharedPreferences.
+        prefs.setString('groupID', newGroupID);
 
-          // Trả về newGroupID sau khi lấy từ API.
-          return newGroupID;
-        } else {
-          // Nếu newGroupID là rỗng, trả về null hoặc giá trị mặc định khác tùy theo yêu cầu.
-          return null;
-        }
-      } catch (e) {
-        log('Failed to fetch user detail: $e');
-        // Trả về null trong trường hợp lỗi.
+        log('Fetched and stored groupID: $newGroupID');
+
+        // Trả về newGroupID sau khi lấy từ API.
+        return newGroupID;
+      } else {
+        // Nếu newGroupID là rỗng, trả về null hoặc giá trị mặc định khác tùy theo yêu cầu.
         return null;
       }
+    } catch (e) {
+      log('Failed to fetch user detail: $e');
+      // Trả về null trong trường hợp lỗi.
+      return null;
     }
+    // }
   }
 
   void createGroup() async {
