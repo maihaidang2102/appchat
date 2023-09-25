@@ -1,6 +1,6 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:developer';
+import 'dart:io';
+import 'dart:async'; // Import thêm thư viện này
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -14,10 +14,10 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit()
       : super(const LoginState(
-          registeredSocket: false,
-          loggedIn: false,
-          role: -1,
-        )) {
+    registeredSocket: false,
+    loggedIn: false,
+    role: -1,
+  )) {
     _socketManager.addMessageListener((data) async {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -41,6 +41,26 @@ class LoginCubit extends Cubit<LoginState> {
   }
   final _socketManager = SocketManager.instance;
 
+  Future<String> getUserIP() async {
+    String userIP = '1.2.3.4.10'; // Giá trị mặc định nếu không lấy được IP
+
+    try {
+      final interfaces = await NetworkInterface.list();
+      for (final interface in interfaces) {
+        for (final address in interface.addresses) {
+          if (address.type == InternetAddressType.IPv4) {
+            userIP = address.address;
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      print('Lỗi khi lấy địa chỉ IP: $e');
+    }
+
+    return userIP;
+  }
+
   Future<void> checkAndNavigate() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userID');
@@ -57,7 +77,7 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       // Nếu userID là null, tiến hành gửi API đăng nhập
       final apiService = ApiServiceAuthentication();
-      const userIP = '1.2.3.4.5';
+      final userIP = await getUserIP(); // Lấy địa chỉ IP của máy tính
 
       try {
         final userResponse = await apiService.loginUser(userIP);
@@ -87,12 +107,13 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  void registerUser() async {
+  void registerUser(String userName) async {
     final apiService = ApiServiceAuthentication();
-    const userIP = '1.2.3.4.132';
+    final userIP = await getUserIP(); // Lấy địa chỉ IP của máy tính
+
     try {
       final prefs = await SharedPreferences.getInstance();
-      final userResponse = await apiService.registerUser(userIP);
+      final userResponse = await apiService.registerUser(userIP, userName);
       final role = userResponse.data?.role ?? -1;
       prefs.setString('userID', userResponse.data?.id ?? '');
       prefs.setInt('userRole', userResponse.data?.role ?? -1);

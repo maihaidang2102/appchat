@@ -13,7 +13,7 @@ class ApiServiceAuthentication {
   // static const String baseUrl = 'https://3469-171-226-133-187.ngrok-free.app/api/v1';
   static const String baseUrl = 'http://13.214.193.32/api/v1';
 
-  Future<UserResponse> registerUser(String userIP) async {
+  Future<UserResponse> registerUser(String userIP, String userName) async {
     final url = Uri.parse('$baseUrl/user/register');
 
     final headers = {
@@ -21,10 +21,17 @@ class ApiServiceAuthentication {
       'Content-Type': 'application/json',
     };
 
-    // Xây dựng body dưới dạng raw
-    final rawBody = '{"userIP":"$userIP"}';
+    // Xây dựng body dưới dạng JSON
+    final body = {
+      'userIP': userIP,
+      'userName': userName,
+    };
 
-    final response = await http.post(url, headers: headers, body: rawBody);
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: json.encode(body), // Chuyển đổi body thành chuỗi JSON
+    );
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
@@ -43,6 +50,7 @@ class ApiServiceAuthentication {
       throw Exception('Đăng ký thất bại');
     }
   }
+
 
   Future<UserResponse> loginUser(String userIP) async {
     final url = Uri.parse('$baseUrl/user/login');

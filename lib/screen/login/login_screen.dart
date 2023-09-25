@@ -1,4 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 import 'package:chat/blocs/cubit_login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _controller = TextEditingController();
+  bool isNameEntered = false; // Biến để kiểm tra xem tên đã được nhập hay chưa
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +65,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Nhập tên:',
                       border:
-                          OutlineInputBorder(borderSide: BorderSide(width: 1)),
+                      OutlineInputBorder(borderSide: BorderSide(width: 1)),
                     ),
+                    onChanged: (value) {
+                      // Kiểm tra xem người dùng đã nhập tên hay chưa
+                      setState(() {
+                        isNameEntered = value.isNotEmpty;
+                      });
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -75,10 +81,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStatePropertyAll(Colors.grey.shade200),
+                    MaterialStatePropertyAll(Colors.grey.shade200),
                     overlayColor: const MaterialStatePropertyAll(Colors.grey),
                   ),
-                  onPressed: () => context.read<LoginCubit>().registerUser(),
+                  onPressed: () {
+                    if (isNameEntered) {
+                      // Chỉ gọi registerUser() nếu tên đã được nhập
+                      context.read<LoginCubit>().registerUser(_controller.text);
+                    } else {
+                      // Hiển thị thông báo yêu cầu nhập tên
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Vui lòng nhập tên trước khi bắt đầu.'),
+                        ),
+                      );
+                    }
+                  },
                   child: const Text(
                     'Bắt đầu',
                     style: TextStyle(

@@ -96,7 +96,7 @@ class _MessageDetailState extends State<MessageDetail> {
                       padding: const EdgeInsets.all(10.0),
                       width: state.role == 0 ? width - 200 : width,
                       child: Text(
-                        'Đang trò chuyện với: ${messages.isEmpty ? "" : messages.first.seenUin.isNotEmpty ? messages.first.seenUin.first : ""}',
+                        'Đang trò chuyện với: ${messages.first.senderInfo.userName}',
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -188,7 +188,7 @@ class _MessageDetailState extends State<MessageDetail> {
                   // padding: EdgeInsets.only(bottom: 200),
                   children: [
                     const Center(
-                      child: Text('Không có tin nhắn hoặc có lỗi xảy ra.'),
+                      child: Text('Hãy bắt đầu cuộc trò truyện.'),
                     ),
                     Spacer(),
                     RawKeyboardListener(
